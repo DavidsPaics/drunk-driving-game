@@ -24,6 +24,7 @@ class Game:
         temp.scrollPos = 0
 
         self.player = Player(self.mainLayer)
+        globals.player = self.player
         pygame.mouse.set_visible(False)
         self.cursor = Cursor()
 

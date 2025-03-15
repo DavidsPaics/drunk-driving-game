@@ -20,32 +20,47 @@ class Player(pygame.sprite.Sprite):
         self.angle = 0
 
         self.shakeIntensity = 0
-
         self.drivingSpeed = 0.15
+
+        self.fade_time = 1000  # milliseconds
+        self.engine_sound = pygame.mixer.Sound("assets/sounds/engine.mp3")
+        self.offroad_sound = pygame.mixer.Sound("assets/sounds/offroad.mp3")
+        self.engine_channel = pygame.mixer.Channel(0)
+        self.offroad_channel = pygame.mixer.Channel(1)
+        self.engine_channel.play(self.engine_sound, loops=-1)
+        # Start offroad sound immediately at 0 volume.
+        self.offroad_channel.play(self.offroad_sound, loops=-1)
+        self.offroad_channel.set_volume(0)
 
     def update(self, dt):
         self.handleInput(dt)
 
         maxTilt = 25
-        maxVelocity = 0.25  # Ensure it matches the handleInput max velocity
-
-        # Scale velocity to angle range (-25 to 25)
+        maxVelocity = 0.25
         self.angle = max(-maxTilt, min(maxTilt, (self.velocityX / maxVelocity) * maxTilt))
 
-        # self.realRect.x += self.velocityX * dt
-
-        if (self.realRect.right > 462 or self.realRect.x<177): #highway2x2
+        if (self.realRect.right > 462 or self.realRect.x < 177):  # offroad condition
             self.shakeIntensity = 3
-            globals.scrollSpeed = max(self.drivingSpeed-0.075, globals.scrollSpeed-0.00005*dt)
+            globals.scrollSpeed = max(self.drivingSpeed - 0.075, globals.scrollSpeed - 0.00005 * dt)
+            target_volume = 1.0
         else:
             self.shakeIntensity = 0
-            globals.scrollSpeed = min(self.drivingSpeed, globals.scrollSpeed+0.00005*dt)
+            globals.scrollSpeed = min(self.drivingSpeed, globals.scrollSpeed + 0.00005 * dt)
+            target_volume = 0.0
+
+        # Gradually adjust the offroad sound volume without restarting the sound.
+        current_volume = self.offroad_channel.get_volume()
+        fade_rate = dt / self.fade_time
+        if current_volume < target_volume:
+            new_volume = min(current_volume + fade_rate, target_volume)
+        else:
+            new_volume = max(current_volume - fade_rate, target_volume)
+        self.offroad_channel.set_volume(new_volume)
 
         self.shake(dt)
 
         self.image = pygame.transform.rotate(self.originalImage, -self.angle)
         self.realRect = self.image.get_rect(center=self.realRect.center)
-
 
     def shake(self, dt):
         if self.shakeIntensity > 0:
@@ -54,32 +69,26 @@ class Player(pygame.sprite.Sprite):
             offsetY = random.uniform(-1, 1) * self.shakeIntensity
             self.rect.center = self.realRect.center + pygame.Vector2(offsetX, offsetY)
         else:
-            self.rect.center = self.realRect.center  # No shake, stay at target position
+            self.rect.center = self.realRect.center
 
     def handleInput(self, dt):
         targetX, _ = globals.drunkCursorPos
+        acceleration = 0.00025
+        damping = 0.9
+        threshold = 0.01
 
-        # Adjust acceleration factor for smooth response
-        acceleration = .00025  # How fast it speeds up
-        damping = 0.9       # Slows down oscillations smoothly
-        threshold = 0.01    # When to clamp velocity to zero
-
-        # Compute acceleration based on the difference in position
         force = (targetX - self.realRect.centerx) * acceleration
-
-        # Apply force to velocity (inertia effect)
         self.velocityX = max(-0.5, min(0.5, force * dt))
-
-        # Apply damping to gradually settle motion
         self.velocityX *= damping
-
-        # Clamp velocity to zero if it's too small
         if abs(self.velocityX) < threshold:
             self.velocityX = 0
 
-        # Update position using velocity
         self.realRect.centerx += self.velocityX * dt
 
     def onCrash(self):
         print("crash")
+        self.engine_channel.stop()
+        pygame.mixer.Sound("assets/sounds/crash.mp3").play()
+        self.rect.topleft = (-50, 1)
+        self.realRect.topleft = (-50, 0)
         self.kill()

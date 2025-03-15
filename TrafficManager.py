@@ -70,6 +70,8 @@ class TrafficManager:
             self.timer2Duration = random.randint(1000,5000)/1000
 
         for car in self.traffic:
+            if globals.player.rect.colliderect(car.rect):
+                globals.player.onCrash()
             if (not car.isGoingUp and car.rect.y>360):
                 self.traffic.remove(car)
 
