@@ -1,6 +1,6 @@
 import pygame
 import math
-import globals  # for globals.scaleMousePos()
+import globals
 
 class Cursor(pygame.sprite.Sprite):
     def __init__(self, glue_top=False):
@@ -30,9 +30,9 @@ class Cursor(pygame.sprite.Sprite):
         # Our pivot now is at the center of the new image (which is the bottle cap).
         self.top = pygame.Vector2(320, 180)  # Starting at center of 640x360.
         self.top_velocity = pygame.Vector2(0, 0)
-        self.top_mass = 1.0
-        self.top_stiffness = 100  # Adjust for responsiveness.
-        self.top_damping = 0.85   # Damping to settle quickly.
+        self.top_mass = 1
+        self.top_stiffness = 50  # Adjust for responsiveness.
+        self.top_damping = 0.9   # Damping to settle quickly.
 
         # --- Bottom (pendulum) dynamics ---
         # The bottom is free to swing with gravity.
@@ -40,7 +40,7 @@ class Cursor(pygame.sprite.Sprite):
         self.length = self.bottle_length
         self.bottom = self.top + pygame.Vector2(0, self.length)
         self.bottom_velocity = pygame.Vector2(0, 0)
-        self.gravity = 750         # Gravity in pixels/sec^2.
+        self.gravity = 950         # Gravity in pixels/sec^2.
         self.bottom_damping = 0.99 # Damping to simulate air resistance.
 
     def update(self, dt):
