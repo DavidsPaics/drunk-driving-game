@@ -3,6 +3,7 @@ import pygame, time, TextureManager, random
 from Player import Player
 import globals
 from level import LevelChunk
+import level
 from Cursor import Cursor
 
 
@@ -12,8 +13,10 @@ class Game:
         globals.screen_size = self.screen.get_size()
         self.scaledScreen = pygame.surface.Surface((640,360))
         TextureManager.loadCarTextures()
+        TextureManager.loadLevelTextures()
         self.backgroundLayer = CameraGroup(self.scaledScreen)
         self.mainLayer = CameraGroup(self.scaledScreen)
+
 
         LevelChunk(self.backgroundLayer)
         temp = LevelChunk(self.backgroundLayer)

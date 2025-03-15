@@ -1,7 +1,7 @@
 import pygame, time
-from Game import Game
-
 pygame.init()
+
+from Game import Game
 
 game = Game()
 

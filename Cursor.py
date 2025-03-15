@@ -82,9 +82,12 @@ class Cursor(pygame.sprite.Sprite):
         angle = 90 - math.degrees(math.atan2(diff.y, diff.x))
 
         # --- Rotate the image about its center (the bottle cap) ---
-        rotated_image = pygame.transform.rotate(self.original_image, angle)
-        # With the bottle cap centered in our texture, we simply set the rotated image's center to self.top.
-        rotated_rect = rotated_image.get_rect(center=(int(self.top.x), int(self.top.y)))
-        
-        self.image = rotated_image
-        self.rect = rotated_rect
+        if abs(angle)>1:
+            rotated_image = pygame.transform.rotate(self.original_image, angle)
+            # With the bottle cap centered in our texture, we simply set the rotated image's center to self.top.
+            rotated_rect = rotated_image.get_rect(center=(int(self.top.x), int(self.top.y)))
+            self.image = rotated_image
+            self.rect = rotated_rect
+        else:
+            self.image = self.original_image
+            self.rect = self.original_image.get_rect(center=(int(self.top.x), int(self.top.y)))

@@ -1,6 +1,13 @@
 import pygame, os
 
 carTextures = {}
+groundTextures = {}
+roadTextures = {}
+
+def loadLevelTextures():
+    global groundTextures, roadTextures
+    groundTextures = loadTextureDictFromFolder("assets/ground/")
+    roadTextures = loadTextureDictFromFolder("assets/road/")
 
 def loadCarTextures(path="./assets/cars/"):
     print("loadaing car textures")
@@ -11,3 +18,24 @@ def loadCarTextures(path="./assets/cars/"):
             carTextures[car_name] = pygame.image.load(os.path.join(path, filename)).convert_alpha()
     
     print(carTextures)
+
+
+def loadTextureDictFromFolder(path):
+    """Loads all images from a folder into a dictionary as pygame surfaces."""
+    texture_dict = {}
+
+    # Ensure the folder exists
+    if not os.path.isdir(path):
+        raise FileNotFoundError(f"Folder not found: {path}")
+
+    # Loop through all files in the directory
+    for filename in os.listdir(path):
+        file_path = os.path.join(path, filename)
+
+        # Only load valid image files
+        if filename.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+            # Load the texture and store it in the dictionary
+            texture_name = os.path.splitext(filename)[0]  # Remove extension
+            texture_dict[texture_name] = pygame.image.load(file_path).convert_alpha()
+
+    return texture_dict
