@@ -6,7 +6,7 @@ class Cursor(pygame.sprite.Sprite):
     def __init__(self, glue_top=False):
         super().__init__()
         # Load the original image (with the bottle cap at (w/2, 0))
-        original = pygame.image.load("assets/wierdDrink.png").convert_alpha()
+        original = pygame.image.load("assets/alcohol.png").convert_alpha()
         w, h = original.get_size()
         self.bottle_length = h  # Physical bottle length
 

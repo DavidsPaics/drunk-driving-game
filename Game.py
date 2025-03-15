@@ -5,6 +5,7 @@ import globals
 from level import LevelChunk
 import level
 from Cursor import Cursor
+from TrafficManager import TrafficManager
 
 
 class Game:
@@ -26,6 +27,8 @@ class Game:
         pygame.mouse.set_visible(False)
         self.cursor = Cursor()
 
+        self.trafficManager = TrafficManager(self.scaledScreen)
+
         
     def run(self):
 
@@ -44,14 +47,18 @@ class Game:
             self.cursor.update(dt)
             globals.drunkCursorPos = (self.cursor.bottom.x, self.cursor.bottom.y)
 
-            self.scaledScreen.fill((0,0,0))
             self.backgroundLayer.update(dt)
+            self.trafficManager.update(dt)
             self.mainLayer.update(dt)
+
+            self.scaledScreen.fill((0,0,0))
             self.backgroundLayer.cameraDraw()
+            self.trafficManager.draw()
             self.mainLayer.cameraDraw()
             self.scaledScreen.blit(self.cursor.image, self.cursor.rect.topleft)
             
             self.screen.blit(pygame.transform.scale(self.scaledScreen, self.screen.get_size()), (0,0))
+            
             pygame.display.flip()
 
 

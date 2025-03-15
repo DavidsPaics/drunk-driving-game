@@ -10,7 +10,6 @@ class Player(pygame.sprite.Sprite):
         super().__init__(*groups)
         self.carType = "compact_red"
         self.originalImage = TextureManager.carTextures.get(self.carType) or TextureManager.carTextures.get("compact_red")
-        self.originalImage = pygame.transform.scale(self.originalImage, (self.originalImage.get_rect().width*1.5, self.originalImage.get_rect().height*1.5))
         self.realRect = self.originalImage.get_rect()
         self.rect = self.realRect
         self.image = self.originalImage
@@ -22,7 +21,7 @@ class Player(pygame.sprite.Sprite):
 
         self.shakeIntensity = 0
 
-        self.drivingSpeed = 0.2
+        self.drivingSpeed = 0.15
 
     def update(self, dt):
         self.handleInput(dt)
@@ -34,6 +33,13 @@ class Player(pygame.sprite.Sprite):
         self.angle = max(-maxTilt, min(maxTilt, (self.velocityX / maxVelocity) * maxTilt))
 
         # self.realRect.x += self.velocityX * dt
+
+        if (self.realRect.right > 462 or self.realRect.x<177): #highway2x2
+            self.shakeIntensity = 3
+            globals.scrollSpeed = max(self.drivingSpeed-0.075, globals.scrollSpeed-0.00005*dt)
+        else:
+            self.shakeIntensity = 0
+            globals.scrollSpeed = min(self.drivingSpeed, globals.scrollSpeed+0.00005*dt)
 
         self.shake(dt)
 
@@ -74,3 +80,6 @@ class Player(pygame.sprite.Sprite):
         # Update position using velocity
         self.realRect.centerx += self.velocityX * dt
 
+    def onCrash(self):
+        print("crash")
+        self.kill()
