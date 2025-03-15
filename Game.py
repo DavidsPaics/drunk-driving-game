@@ -40,9 +40,6 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_F3:
-                        self.mainLayer.start_shake(5, 500)
 
             self.cursor.update(dt)
             globals.drunkCursorPos = (self.cursor.bottom.x, self.cursor.bottom.y)
