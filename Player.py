@@ -58,7 +58,7 @@ class Player(pygame.sprite.Sprite):
 
         if (self.realRect.right > 462 or self.realRect.x < 177):  # offroad condition
             self.shakeIntensity = 3
-            globals.scrollSpeed = max(self.drivingSpeed - 0.075, globals.scrollSpeed - 0.00005 * dt)
+            globals.scrollSpeed = max(self.drivingSpeed - 0.125, globals.scrollSpeed - 0.00005 * dt)
             target_volume = 1.0
         else:
             self.shakeIntensity = 0

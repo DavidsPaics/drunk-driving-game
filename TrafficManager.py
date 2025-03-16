@@ -8,25 +8,18 @@ import random
 import globals
 
 class Car(pygame.sprite.Sprite):
-    def __init__(self, texture, isGoingUp, speed, laneX, *groups):
+    def __init__(self, texture, speed, laneX, *groups):
         super().__init__(*groups)
         self.image = texture
         self.rect = self.image.get_rect()
-        self.isGoingUp = isGoingUp
         self.max_speed = speed
         self.speed = speed
         self.laneX = laneX
-        if self.isGoingUp:
-            self.rect.center = (laneX, 360)
-        else:
-            self.rect.center = (laneX, 0 - self.rect.height)
+        self.rect.center = (laneX, 0 - self.rect.height)
 
 
     def update(self, dt):
-        if self.isGoingUp:
-            new_centery = self.rect.centery - self.speed * dt + globals.scrollSpeed * dt
-        else:
-            new_centery = self.rect.centery + self.speed * dt + globals.scrollSpeed * dt
+        new_centery = self.rect.centery + self.speed * dt + globals.scrollSpeed * dt
 
         self.rect.center = (self.laneX, new_centery)
 
@@ -42,21 +35,23 @@ class TrafficManager:
         self.timerDuration = random.randint(0,2000)/1000
         self.timer2Start = time.time()
         self.timer2Duration = random.randint(0,2000)/1000
+        self.timer3Start = time.time()
+        self.timer3Duration = random.randint(3000,7000)/1000
+        self.timer4Start = time.time()
+        self.timer4Duration = random.randint(3000,7000)/1000
 
         self.lastRoadRageIncident = time.time()
     
-    def spawnCar(self, laneChoice=None):
-        carBase = pygame.transform.flip(random.choice(list(TextureManager.carTextures.values())), 0, 1)
-        goingUp = False
+    def spawnCar(self, lane):
+        carBase = random.choice(list(TextureManager.carTextures.values()))
         speed = random.randint(5, 20)/100
 
-        if not goingUp:
-            lane = random.choice([210, 280])
-        
-        if laneChoice != None:
-            lane = laneChoice
+        if lane in [350,420]:
+            speed = random.randint(-10, -3)/100
+        else:
+            carBase = pygame.transform.flip(carBase,0,1)
 
-        newcar = Car(carBase, goingUp, speed, lane)
+        newcar = Car(carBase, speed, lane)
 
         self.traffic.append(newcar)
     
@@ -71,17 +66,27 @@ class TrafficManager:
             self.timer2Start = time.time()
             self.timer2Duration = random.randint(1000,5000)/1000
 
-        for car in self.traffic:
-            prect = globals.player.realRect
+        if time.time() - self.timer3Start > self.timer3Duration:
+            self.spawnCar(350)
+            self.timer3Start = time.time()
+            self.timer3Duration = random.randint(3000,7000)/1000
+        if time.time() - self.timer4Start > self.timer4Duration:
+            self.spawnCar(420)
+            self.timer4Start = time.time()
+            self.timer4Duration = random.randint(3000,7000)/1000
 
-            if pygame.rect.Rect(prect.x-25,prect.y-25,prect.width+25,prect.height+25).colliderect(car.rect):
+        for car in self.traffic:
+            rprect = globals.player.realRect
+            prect = globals.player.rect
+
+            if pygame.rect.Rect(rprect.x-25,rprect.y-25,rprect.width+25,rprect.height+25).colliderect(car.rect):
                 if time.time() - self.lastRoadRageIncident > 2:
                     pygame.mixer.Sound(f"assets/sounds/horns/{random.randint(1,6)}.mp3").play()
                     self.lastRoadRageIncident = time.time()
 
             if prect.colliderect(car.rect):
                 globals.player.onCrash()
-            if (not car.isGoingUp and car.rect.y>360):
+            if car.rect.y>360:
                 self.traffic.remove(car)
 
             car.update(dt)
