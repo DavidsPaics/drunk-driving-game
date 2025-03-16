@@ -74,8 +74,8 @@ class TrafficManager:
         for car in self.traffic:
             prect = globals.player.realRect
 
-            if pygame.rect.Rect(prect.x-10,prect.y-10,prect.width+10,prect.height+10).colliderect(car.rect):
-                if time.time() - self.lastRoadRageIncident:
+            if pygame.rect.Rect(prect.x-25,prect.y-25,prect.width+25,prect.height+25).colliderect(car.rect):
+                if time.time() - self.lastRoadRageIncident > 2:
                     pygame.mixer.Sound(f"assets/sounds/horns/{random.randint(1,6)}.mp3").play()
                     self.lastRoadRageIncident = time.time()
 

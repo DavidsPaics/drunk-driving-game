@@ -40,7 +40,7 @@ class Cursor(pygame.sprite.Sprite):
         self.length = self.bottle_length
         self.bottom = self.top + pygame.Vector2(0, self.length)
         self.bottom_velocity = pygame.Vector2(0, 0)
-        self.gravity = 950         # Gravity in pixels/sec^2.
+        self.gravity = 950         # Gravity in pixels/sec^2. 
         self.bottom_damping = 0.99 # Damping to simulate air resistance.
 
     def update(self, dt):

@@ -5,6 +5,8 @@ import globals
 
 SCREEN_CENTER_X = 320
 
+radio = [None]
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
@@ -27,10 +29,20 @@ class Player(pygame.sprite.Sprite):
         self.offroad_sound = pygame.mixer.Sound("assets/sounds/offroad.mp3")
         self.engine_channel = pygame.mixer.Channel(0)
         self.offroad_channel = pygame.mixer.Channel(1)
+        self.radioChannel = pygame.mixer.Channel(2)
+        self.radioChannel.set_volume(3)
+
+        for i in range(1,7):
+            radio.append(pygame.mixer.Sound(f"assets/sounds/radio/{i}.mp3"))
+
+        self.radioChannel.play(radio[2])
         self.engine_channel.play(self.engine_sound, loops=-1)
+        self.engine_channel.set_volume(0.5)
         # Start offroad sound immediately at 0 volume.
         self.offroad_channel.play(self.offroad_sound, loops=-1)
         self.offroad_channel.set_volume(0)
+
+
 
     def update(self, dt):
         self.handleInput(dt)
@@ -38,6 +50,9 @@ class Player(pygame.sprite.Sprite):
         maxTilt = 25
         maxVelocity = 0.25
         self.angle = max(-maxTilt, min(maxTilt, (self.velocityX / maxVelocity) * maxTilt))
+
+        if not self.radioChannel.get_busy():
+            self.radioChannel.play(radio[random.randint(1,6)])
 
         if (self.realRect.right > 462 or self.realRect.x < 177):  # offroad condition
             self.shakeIntensity = 3
