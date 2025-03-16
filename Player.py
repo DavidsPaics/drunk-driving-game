@@ -8,7 +8,7 @@ SCREEN_CENTER_X = 320
 radio = [None]
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, *groups):
+    def __init__(self, endGameCallback, *groups):
         super().__init__(*groups)
         self.carType = "compact_red"
         self.originalImage = TextureManager.carTextures.get(self.carType) or TextureManager.carTextures.get("compact_red")
@@ -17,12 +17,14 @@ class Player(pygame.sprite.Sprite):
         self.image = self.originalImage
         self.realRect.center = (SCREEN_CENTER_X, 300)
 
+        self.endGameCallback = endGameCallback
+
         self.velocityX = 0
         self.accelerationX = 0
         self.angle = 0
 
         self.shakeIntensity = 0
-        self.drivingSpeed = 0.15
+        self.drivingSpeed = 0.25
 
         self.fade_time = 1000  # milliseconds
         self.engine_sound = pygame.mixer.Sound("assets/sounds/engine.mp3")
@@ -103,7 +105,8 @@ class Player(pygame.sprite.Sprite):
     def onCrash(self):
         print("crash")
         self.engine_channel.stop()
-        pygame.mixer.Sound("assets/sounds/crash.mp3").play()
         self.rect.topleft = (-50, 1)
         self.realRect.topleft = (-50, 0)
+        self.endGameCallback()
+        pygame.mixer.Sound("assets/sounds/crash.mp3").play()
         self.kill()

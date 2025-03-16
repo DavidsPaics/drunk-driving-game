@@ -9,8 +9,8 @@ from TrafficManager import TrafficManager
 
 
 class Game:
-    def __init__(self):
-        self.screen =  pygame.display.set_mode((0, 0))
+    def __init__(self, screen):
+        self.screen = screen
         globals.screen_size = self.screen.get_size()
         self.scaledScreen = pygame.surface.Surface((640,360))
         TextureManager.loadCarTextures()
@@ -23,7 +23,7 @@ class Game:
         temp = LevelChunk(self.backgroundLayer)
         temp.scrollPos = 0
 
-        self.player = Player(self.mainLayer)
+        self.player = Player(self.endGame, self.mainLayer)
         globals.player = self.player
         pygame.mouse.set_visible(False)
         self.cursor = Cursor()
@@ -34,13 +34,13 @@ class Game:
     def run(self):
 
         clock = pygame.time.Clock()
-        running = True
-        while running:
+        self.running = True
+        while self.running:
             dt = clock.tick(60)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
 
             self.cursor.update(dt)
             globals.drunkCursorPos = (self.cursor.bottom.x, self.cursor.bottom.y)
@@ -58,6 +58,9 @@ class Game:
             self.screen.blit(pygame.transform.scale(self.scaledScreen, self.screen.get_size()), (0,0))
             
             pygame.display.flip()
+    
+    def endGame(self):
+        self.running = False
 
 
 class CameraGroup(pygame.sprite.Group):
@@ -84,10 +87,3 @@ class CameraGroup(pygame.sprite.Group):
         for sprite in self.sprites():
             offset_pos = sprite.rect.topleft - self.pos
             self.surface.blit(sprite.image, offset_pos)
-
-if __name__ == "__main__":
-    pygame.init()
-
-    game = Game()
-
-    game.run()
