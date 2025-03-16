@@ -42,6 +42,8 @@ class TrafficManager:
         self.timerDuration = random.randint(0,2000)/1000
         self.timer2Start = time.time()
         self.timer2Duration = random.randint(0,2000)/1000
+
+        self.lastRoadRageIncident = time.time()
     
     def spawnCar(self, laneChoice=None):
         carBase = pygame.transform.flip(random.choice(list(TextureManager.carTextures.values())), 0, 1)
@@ -70,7 +72,14 @@ class TrafficManager:
             self.timer2Duration = random.randint(1000,5000)/1000
 
         for car in self.traffic:
-            if globals.player.rect.colliderect(car.rect):
+            prect = globals.player.realRect
+
+            if pygame.rect.Rect(prect.x-10,prect.y-10,prect.width+10,prect.height+10).colliderect(car.rect):
+                if time.time() - self.lastRoadRageIncident:
+                    pygame.mixer.Sound(f"assets/sounds/horns/{random.randint(1,6)}.mp3").play()
+                    self.lastRoadRageIncident = time.time()
+
+            if prect.colliderect(car.rect):
                 globals.player.onCrash()
             if (not car.isGoingUp and car.rect.y>360):
                 self.traffic.remove(car)
