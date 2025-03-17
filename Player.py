@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         for i in range(1,7):
             radio.append(pygame.mixer.Sound(f"assets/sounds/radio/{i}.mp3"))
 
-        self.radioChannel.play(radio[2])
+        self.radioChannel.play(radio[random.randint(1,2)])
         self.engine_channel.play(self.engine_sound, loops=-1)
         self.engine_channel.set_volume(0.5)
         # Start offroad sound immediately at 0 volume.
