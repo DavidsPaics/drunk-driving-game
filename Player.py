@@ -14,6 +14,8 @@ class Player(pygame.sprite.Sprite):
         self.originalImage = TextureManager.carTextures.get(self.carType) or TextureManager.carTextures.get("compact_red")
         self.realRect = self.originalImage.get_rect()
         self.rect = self.realRect
+        self.collider = self.originalImage.get_rect()
+        self.collider = pygame.rect.Rect(self.collider.x+10,self.collider.y+10,self.collider.width-10,self.collider.height-10)
         self.image = self.originalImage
         self.realRect.center = (SCREEN_CENTER_X, 300)
 
@@ -25,6 +27,9 @@ class Player(pygame.sprite.Sprite):
 
         self.shakeIntensity = 0
         self.drivingSpeed = 0.25
+
+        self.money = 0
+        self.caps = 0
 
         self.fade_time = 1000  # milliseconds
         self.engine_sound = pygame.mixer.Sound("assets/sounds/engine.mp3")
@@ -78,6 +83,7 @@ class Player(pygame.sprite.Sprite):
 
         self.image = pygame.transform.rotate(self.originalImage, -self.angle)
         self.realRect = self.image.get_rect(center=self.realRect.center)
+        self.collider.center = self.realRect.center
 
     def shake(self, dt):
         if self.shakeIntensity > 0:
@@ -104,9 +110,12 @@ class Player(pygame.sprite.Sprite):
 
     def onCrash(self):
         print("crash")
-        self.engine_channel.stop()
-        self.rect.topleft = (-50, 1)
-        self.realRect.topleft = (-50, 0)
-        self.endGameCallback()
-        pygame.mixer.Sound("assets/sounds/crash.mp3").play()
-        self.kill()
+        if not globals.DEBUG:
+            self.engine_channel.stop()
+            self.rect.topleft = (-50, 1)
+            self.realRect.topleft = (-50, 0)
+            self.endGameCallback()
+            pygame.mixer.Sound("assets/sounds/crash.mp3").play()
+            self.kill()
+        else:
+            pygame.mixer.Sound("assets/sounds/crash.mp3").play()

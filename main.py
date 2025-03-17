@@ -6,13 +6,16 @@ pygame.mixer.init()
 
 from Game import Game
 
-screen =  pygame.display.set_mode((0, 0))
+screen =  pygame.display.set_mode((0, 0), pygame.NOFRAME)
 game = Game(screen)
 
 game.run()
 
 run = True
-while(run):
+
+buzzStart = time.time()
+
+while(time.time() - buzzStart < 2 and run):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run=False

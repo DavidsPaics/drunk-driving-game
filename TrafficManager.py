@@ -32,13 +32,13 @@ class TrafficManager:
 
         self.traffic = [] 
         self.timerStart = time.time()
-        self.timerDuration = random.randint(0,2000)/1000
+        self.timerDuration = random.randint(globals.oppositeSpawnMinTime,globals.oppositeSpawnMaxTime)/1000
         self.timer2Start = time.time()
-        self.timer2Duration = random.randint(0,2000)/1000
+        self.timer2Duration = random.randint(globals.oppositeSpawnMinTime,globals.oppositeSpawnMaxTime)/1000
         self.timer3Start = time.time()
-        self.timer3Duration = random.randint(3000,7000)/1000
+        self.timer3Duration = random.randint(globals.sameSpawnMinTime,globals.sameSpawnMaxTime)/1000
         self.timer4Start = time.time()
-        self.timer4Duration = random.randint(3000,7000)/1000
+        self.timer4Duration = random.randint(globals.sameSpawnMinTime,globals.sameSpawnMaxTime)/1000
 
         self.lastRoadRageIncident = time.time()
     
@@ -60,31 +60,33 @@ class TrafficManager:
         if time.time() - self.timerStart > self.timerDuration:
             self.spawnCar(210)
             self.timerStart = time.time()
-            self.timerDuration = random.randint(1000,5000)/1000
+            self.timerDuration = random.randint(globals.oppositeSpawnMinTime,globals.oppositeSpawnMaxTime)/1000
         if time.time() - self.timer2Start > self.timer2Duration:
             self.spawnCar(280)
             self.timer2Start = time.time()
-            self.timer2Duration = random.randint(1000,5000)/1000
+            self.timer2Duration = random.randint(globals.oppositeSpawnMinTime,globals.oppositeSpawnMaxTime)/1000
 
         if time.time() - self.timer3Start > self.timer3Duration:
             self.spawnCar(350)
             self.timer3Start = time.time()
-            self.timer3Duration = random.randint(3000,7000)/1000
+            self.timer3Duration = random.randint(globals.sameSpawnMinTime,globals.sameSpawnMaxTime)/1000
         if time.time() - self.timer4Start > self.timer4Duration:
             self.spawnCar(420)
             self.timer4Start = time.time()
-            self.timer4Duration = random.randint(3000,7000)/1000
+            self.timer4Duration = random.randint(globals.sameSpawnMinTime,globals.sameSpawnMaxTime)/1000
 
+        rprect = globals.player.collider
+        bgrect = pygame.rect.Rect(rprect.x-35,rprect.y-35,rprect.width+35,rprect.height+35)
         for car in self.traffic:
-            rprect = globals.player.realRect
-            prect = globals.player.rect
 
-            if pygame.rect.Rect(rprect.x-25,rprect.y-25,rprect.width+25,rprect.height+25).colliderect(car.rect):
+            if bgrect.colliderect(car.rect):
                 if time.time() - self.lastRoadRageIncident > 2:
+                    globals.notificationManager.showNotification("Near miss: +0.20$")
+                    globals.player.money+=20
                     pygame.mixer.Sound(f"assets/sounds/horns/{random.randint(1,6)}.mp3").play()
                     self.lastRoadRageIncident = time.time()
 
-            if prect.colliderect(car.rect):
+            if rprect.colliderect(car.rect):
                 globals.player.onCrash()
             if car.rect.y>360:
                 self.traffic.remove(car)
@@ -94,3 +96,5 @@ class TrafficManager:
     def draw(self):
         for car in self.traffic:
             self.destinationSurface.blit(car.image, car.rect.topleft)
+            if globals.DEBUG:
+                pygame.draw.rect(self.destinationSurface, (255,0,0), car.rect, 1)

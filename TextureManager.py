@@ -4,6 +4,9 @@ carTextures = {}
 groundTextures = {}
 roadTextures = {}
 
+fontNotScaled = pygame.font.Font("assets/slkscr.ttf", 50)
+fontSmall = pygame.font.Font("assets/slkscr.ttf", 32)
+
 def loadLevelTextures():
     global groundTextures, roadTextures
     groundTextures = loadTextureDictFromFolder("assets/ground/")
@@ -15,7 +18,7 @@ def loadCarTextures(path="./assets/cars/"):
         if filename.endswith(".png"):  # Ensure it's an image file
             car_name = os.path.splitext(filename)[0]  # Remove file extension
             carTextures[car_name] = pygame.image.load(os.path.join(path, filename)).convert_alpha()
-            carTextures[car_name] = pygame.transform.scale(carTextures[car_name], (carTextures[car_name].get_rect().width*1.5, carTextures[car_name].get_rect().height*1.5))
+            carTextures[car_name] = pygame.transform.scale(carTextures[car_name], (carTextures[car_name].get_rect().width*1.5, carTextures[car_name].get_rect().height*1.4))
 
 
 def loadTextureDictFromFolder(path):

@@ -1,12 +1,21 @@
 import os
 import pygame
 
+DEBUG = False
+
 screen_size = (0,0)
 drunkCursorPos = (0,0)
 
 scrollSpeed = 0.15
 
+oppositeSpawnMinTime = 2000
+oppositeSpawnMaxTime = 6000
+
+sameSpawnMinTime = 7000
+sameSpawnMaxTime = 13000
+
 player = None
+notificationManager = None
 
 def scaleMousePos(pos):
     return (pos[0] * (640/screen_size[0]), pos[1] * (360/screen_size[1]))
@@ -50,3 +59,20 @@ def renderText(text,size=20,color=(255,255,255),font="arial",bold=False,italic=F
     if not text_key in texts:
         texts[text_key]=fonts[font_key].render(str(text),1,color)
     return texts[text_key]
+
+
+def blur(surface, amt):
+    """
+    Blurs the given surface.
+    
+    The amount controls how blurry the result is; higher values produce more blur.
+    This is achieved by scaling the surface down and then up again.
+    """
+    scale = 1.0 / amt
+    width, height = surface.get_size()
+    # Calculate the new scaled size (at least 1 pixel in each dimension)
+    scaled_size = (max(1, int(width * scale)), max(1, int(height * scale)))
+    # Scale down and then back up to achieve a blur effect
+    small_surface = pygame.transform.smoothscale(surface, scaled_size)
+    blurred_surface = pygame.transform.smoothscale(small_surface, (width, height))
+    return blurred_surface
