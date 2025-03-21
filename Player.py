@@ -37,18 +37,24 @@ class Player(pygame.sprite.Sprite):
         self.engine_channel = pygame.mixer.Channel(0)
         self.offroad_channel = pygame.mixer.Channel(1)
         self.radioChannel = pygame.mixer.Channel(2)
-        self.radioChannel.set_volume(3)
+        self.radioChannel.set_volume(1)
 
-        for i in range(1,7):
+        for i in range(1,6):
             radio.append(pygame.mixer.Sound(f"assets/sounds/radio/{i}.mp3"))
 
-        self.radioChannel.play(radio[random.randint(1,2)])
-        self.engine_channel.play(self.engine_sound, loops=-1)
-        self.engine_channel.set_volume(0.5)
-        # Start offroad sound immediately at 0 volume.
-        self.offroad_channel.play(self.offroad_sound, loops=-1)
-        self.offroad_channel.set_volume(0)
+        # Select a song based on your condition
+        if random.randint(1, 4) == 1:
+            song = radio[random.randint(0, 1)]  # adjust index if your list is 0-indexed
+        else:
+            song = radio[random.randint(2, 5)]  # adjust index accordingly
 
+        # Start playing the selected song
+        self.radioChannel.play(song)
+
+        if song not in [radio[0], radio[1]]:
+            # Determine a random start time between 0 and the song's duration
+            random_start = random.uniform(0, song.duration)
+            self.radioChannel.seek(random_start)  # Jump to the random point in the song
 
 
     def update(self, dt):

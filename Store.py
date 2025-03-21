@@ -7,7 +7,9 @@ class Store:
         self.scaledScreen = pygame.surface.Surface((1920,1080))
         self.isOpen = False
 
-        self.lido = pygame.transform.scale(pygame.image.load("assets/drinks/lidu.png"), (128,464)).convert_alpha()
+        self.background = pygame.image.load("assets/store.png").convert()
+        self.background = pygame.transform.scale(self.background, (self.background.get_size()[0]*7, self.background.get_size()[1]*7))
+        self.lido = pygame.transform.scale(pygame.image.load("assets/drinks/lidu.png"), (104,375)).convert_alpha()
 
     def openStore(self):
         self.isOpen = True
@@ -16,10 +18,11 @@ class Store:
         # Create a blurred version of the capture (adjust amt as needed)
         blurredCapture = globals.blur(pygame.transform.scale(screenCapture, (1920,1080)), 5)
         # Create a dimming overlay (adjust alpha for different dim levels)
-        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        overlay = pygame.Surface(self.scaledScreen.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 128))  # 128 for half transparency
         pygame.mouse.set_visible(1)
 
+        
         # Main loop for the store
         while self.isOpen:
             dt = globals.clock.tick()
@@ -34,10 +37,10 @@ class Store:
             self.scaledScreen.blit(blurredCapture, (0, 0))
             self.scaledScreen.blit(overlay, (0, 0))
 
-            pygame.draw.rect(self.scaledScreen, (128,128,128), (150,150,self.scaledScreen.get_size()[0]-300, self.scaledScreen.get_size()[1]-300), border_radius=5)
-            self.scaledScreen.blit(TextureManager.fontNotScaled.render("Lidu Beer 2.50$", 0, 0xffffff), (150,660))
+            self.scaledScreen.blit(self.background, (150,150))
+            self.scaledScreen.blit(TextureManager.fontMedium.render("Lidu Beer 2.50$", 0, (255,255,255)), (150,680))
 
-            self.scaledScreen.blit(self.lido, (250,200))
+            self.scaledScreen.blit(self.lido, (260,200))
 
             self.screen.blit(pygame.transform.scale(self.scaledScreen, self.screen.get_size()), (0,0))
 

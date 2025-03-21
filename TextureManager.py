@@ -4,7 +4,8 @@ carTextures = {}
 groundTextures = {}
 roadTextures = {}
 
-fontNotScaled = pygame.font.Font("assets/slkscr.ttf", 50)
+fontLarge = pygame.font.Font("assets/slkscr.ttf", 50)
+fontMedium = pygame.font.Font("assets/slkscr.ttf", 40)
 fontSmall = pygame.font.Font("assets/slkscr.ttf", 32)
 
 def loadLevelTextures():

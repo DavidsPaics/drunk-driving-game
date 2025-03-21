@@ -79,7 +79,7 @@ class Game:
                 pygame.draw.circle(self.scaledScreen, (255,0,0), self.player.realRect.center, 1)
                 pygame.draw.circle(self.scaledScreen, (0,255,0), self.player.collider.center, 1)
             self.screen.blit(pygame.transform.scale(self.scaledScreen, self.screen.get_size()), (0,0))
-            text = TextureManager.fontNotScaled.render(f"{self.player.money/100:.2f}$", 0, (255,255,255))
+            text = TextureManager.fontLarge.render(f"{self.player.money/100:.2f}$", 0, (255,255,255))
             textC = TextureManager.fontSmall.render(f"{self.player.caps} CAPS", 0, (255,255,255))
             pygame.draw.rect(self.screen, (64,128,64), (globals.screen_size[0]/2-(text.get_rect().centerx if text.get_size()[0]>textC.get_size()[0] else textC.get_rect().centerx)-5,10, max(text.get_size()[0], textC.get_size()[0])+10, text.get_size()[1]+textC.get_size()[1]+15), border_radius=3)
             self.screen.blit(text, (globals.screen_size[0]/2-text.get_rect().centerx,15))
