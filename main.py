@@ -6,7 +6,7 @@ pygame.mixer.init()
 
 from Game import Game
 
-screen =  pygame.display.set_mode((0, 0), pygame.NOFRAME)
+screen =  pygame.display.set_mode((0, 0))
 game = Game(screen)
 
 game.run()

@@ -61,18 +61,27 @@ def renderText(text,size=20,color=(255,255,255),font="arial",bold=False,italic=F
     return texts[text_key]
 
 
-def blur(surface, amt):
+import pygame
+
+def blur(surface, amt, iterations=3):
     """
-    Blurs the given surface.
+    Applies a smoother blur effect by performing multiple passes of scaling down and up.
     
-    The amount controls how blurry the result is; higher values produce more blur.
-    This is achieved by scaling the surface down and then up again.
+    Parameters:
+      surface: The pygame.Surface to blur.
+      amt: The blur factor; higher values produce a stronger blur.
+      iterations: The number of passes to perform. More iterations yield a smoother blur.
+    
+    Returns:
+      A new pygame.Surface that is the blurred version of the input.
     """
-    scale = 1.0 / amt
-    width, height = surface.get_size()
-    # Calculate the new scaled size (at least 1 pixel in each dimension)
-    scaled_size = (max(1, int(width * scale)), max(1, int(height * scale)))
-    # Scale down and then back up to achieve a blur effect
-    small_surface = pygame.transform.smoothscale(surface, scaled_size)
-    blurred_surface = pygame.transform.smoothscale(small_surface, (width, height))
-    return blurred_surface
+    blurred = surface.copy()
+    for _ in range(iterations):
+        width, height = blurred.get_size()
+        scale = 1.0 / amt
+        # Calculate the new scaled size (ensuring at least 1 pixel in each dimension)
+        scaled_size = (max(1, int(width * scale)), max(1, int(height * scale)))
+        # Scale down and then back up to achieve the blur effect
+        blurred = pygame.transform.smoothscale(blurred, scaled_size)
+        blurred = pygame.transform.smoothscale(blurred, (width, height))
+    return blurred
